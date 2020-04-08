@@ -29,7 +29,7 @@ public class NERDetection {
 	}
 	public Map<String, Keyword> detect() throws Exception {
 		String serializedClassifier = "english.muc.7class.distsim.crf.ser.gz";
-		
+		Stemmer s = new Stemmer();
 		Map<String, Keyword> ner_keywords = new HashMap<String, Keyword>();
 		
 		AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(serializedClassifier);
@@ -39,6 +39,10 @@ public class NERDetection {
                   trip.first(), trip.second(), trip.third());
           
           String keyword = this.text.substring(trip.second(), trip.third()).toLowerCase();
+          s.add(keyword.toCharArray(), keyword.length());
+          s.stem();
+          keyword = s.toString();
+          
           if(ner_keywords.containsKey(keyword)) {
         	  Keyword k = ner_keywords.get(keyword);
         	  k.setFrequency(k.getFrequency() + 1);
